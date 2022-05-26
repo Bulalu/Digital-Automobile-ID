@@ -7,3 +7,17 @@ compiler:
     remappings:
       - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.5.0"
       - "@chainlink=smartcontractkit/chainlink-brownie-contracts@0.4.0"
+
+networks:
+  
+  development:
+    verify: False
+ 
+  rinkeby:
+    verify: True
+
+  kovan:
+    verify: True
+
+wallets:
+    from_key: ${PRIVATE_KEY}
