@@ -4,10 +4,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
-import "./ERC4907.sol";
+import "./ERC721SemiNumerable.sol";
 import "../interfaces/IERC4907.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract ERC4907 is ERC721Enumerable, IERC4907 {
+
+contract ERC4907 is ERC721SemiNumerable, IERC4907 {
     struct UserInfo 
     {
         address user;   // address of user role
