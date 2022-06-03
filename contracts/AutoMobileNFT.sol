@@ -55,7 +55,7 @@ contract Automobile is ERC4907, Ownable {
         _safeMint(msg.sender, newItemId);
 
         // set nft data
-        _setTokenURI(newItemId, "ipfs://QmRjCzXHUAvTy9L6KySp417XMP8QKC2YCD4b3eBsq4cEp4");
+        _setTokenURI(newItemId, "https://raw.githubusercontent.com/Bulalu/Digital-Automobile-ID/main/metadata/rinkeby/test_NFT.json");
 
         _tokenIds.increment();
 
