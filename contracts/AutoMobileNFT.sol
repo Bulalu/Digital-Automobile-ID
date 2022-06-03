@@ -62,7 +62,7 @@ contract Automobile is ERC4907, Ownable {
         emit NewCarNFTMinted(msg.sender, newItemId);
     }
 
-    function getTotalNFTsMintedSoFar() public returns(uint256 ) {
+    function getTotalNFTsMintedSoFar() public view returns(uint256 ) {
         return _tokenIds.current();
     }
     function withdraw() public onlyOwner {
