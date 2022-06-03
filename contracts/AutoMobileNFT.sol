@@ -17,7 +17,7 @@ import "./ERC4907.sol";
 contract Automobile is ERC4907, Ownable {
 
     using Counters for Counters.Counter;
-    Counters.Counter internal _tokenIdTracker;
+    Counters.Counter internal _tokenIds;
 
     /// @dev Base token URI used as a prefix by tokenURI().
     string public baseTokenURI;
@@ -35,7 +35,7 @@ contract Automobile is ERC4907, Ownable {
 
     /// @notice token_id => CarAttributes
     // mapping(uint256 => CarAttributes) public tokenInfo;
-    
+    event NewCarNFTMinted(address sender, uint256 tokenId);
 
 
     event LendingUpdate(uint256 tokenId, address user, uint64 expires );
@@ -46,29 +46,25 @@ contract Automobile is ERC4907, Ownable {
     }
 
 
-        /// @dev Returns an URI for a given token ID
-    function _baseURI() internal view virtual override returns (string memory) {
-        return baseTokenURI;
-    }
-
-    /// @dev Sets the base token URI prefix.
-    function setBaseTokenURI(string memory _baseTokenURI) public {
-        baseTokenURI = _baseTokenURI;
-    }
-
-
-    function _safeMint(address _user) internal returns (uint256){
-        uint256 _tokenId = _tokenIdTracker.current();
-        _safeMint(_user, _tokenId);
-        _tokenIdTracker.increment();
-        return _tokenId;
-    }
+   
 
     function mintCar() external payable {
+        
         require(msg.value >= mintPrice, "Not enough amount to mint NFT");
-        _safeMint(msg.sender);
+        uint256 newItemId = _tokenIds.current();
+        _safeMint(msg.sender, newItemId);
+
+        // set nft data
+        _setTokenURI(newItemId, "ipfs://QmRjCzXHUAvTy9L6KySp417XMP8QKC2YCD4b3eBsq4cEp4");
+
+        _tokenIds.increment();
+
+        emit NewCarNFTMinted(msg.sender, newItemId);
     }
 
+    function getTotalNFTsMintedSoFar() public returns(uint256 ) {
+        return _tokenIds.current();
+    }
     function withdraw() public onlyOwner {
         require(address(this).balance > 0, "Balance is zero ser");
         payable(owner()).transfer(address(this).balance);
@@ -85,19 +81,15 @@ contract Automobile is ERC4907, Ownable {
     }
 
 
-    function getOwnerTokens(address _owner) public view returns (uint256[] memory) {
-        uint256 count = balanceOf(_owner);
-        uint256[] memory tokenIds = new uint256[](count);
-        for(uint i = 0; i < count; i++) {
-            tokenIds[i] = _ownedTokens[_owner][i];
-        }
-        return tokenIds;
-    }
-
-    // function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
-    //     require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: caller is not owner nor approved");
-    //     _setTokenURI(tokenId, _tokenURI);
-
+    // function getOwnerTokens(address _owner) public view returns (uint256[] memory) {
+    //     uint256 count = balanceOf(_owner);
+    //     uint256[] memory tokenIds = new uint256[](count);
+    //     for(uint i = 0; i < count; i++) {
+    //         tokenIds[i] = _ownedTokens[_owner][i];
+    //     }
+    //     return tokenIds;
     // }
+
+    
 
 }

@@ -9,7 +9,7 @@ import "../interfaces/IERC4907.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 
-contract ERC4907 is ERC721SemiNumerable, IERC4907 {
+contract ERC4907 is ERC721URIStorage, IERC4907 {
     struct UserInfo 
     {
         address user;   // address of user role

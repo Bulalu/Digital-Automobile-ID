@@ -14,7 +14,7 @@ networks:
     verify: False
  
   rinkeby:
-    verify: True
+    verify: False
 
   kovan:
     verify: True
