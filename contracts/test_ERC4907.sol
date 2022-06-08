@@ -33,6 +33,7 @@ contract ERC_DualRoles is ERC721, IERC4907 {
     function userExpires(uint256 tokenId) public view virtual returns(uint256){
         return _users[tokenId].expires;
     }
+    
      
     /**  get the user role of a token */
     function userOf(uint256 tokenId)public view virtual returns(address){
@@ -51,6 +52,7 @@ contract ERC_DualRoles is ERC721, IERC4907 {
     ) internal virtual override{
         super._beforeTokenTransfer(from, to, tokenId);
 
+        require(block.timestamp > _users[tokenId].expires, "Token has not yet expired");
         if (from != to) {
             _users[tokenId].user = address(0);
             _users[tokenId].expires = 0;
