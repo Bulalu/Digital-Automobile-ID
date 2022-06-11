@@ -33,6 +33,19 @@ contract Automobile is ERC4907, Ownable {
     //     bool accidentStatus;
     // }
 
+    struct Borrowers {
+        uint64 borrowingTime;
+        uint256 bidPrice;
+        // did the user get the car?
+        bool status;
+        bool registered;
+    }
+
+
+    mapping(address => Borrowers) public borrowers;
+
+    address[]  public borrowersList;
+
     /// @notice token_id => CarAttributes
     // mapping(uint256 => CarAttributes) public tokenInfo;
     event NewCarNFTMinted(address sender, uint256 tokenId);
@@ -46,7 +59,19 @@ contract Automobile is ERC4907, Ownable {
     }
 
 
-   
+    // fee ?
+    // how much will the lender get
+    // how much will the protocol get
+    // minimum time
+    // relationship between _time and bidPrice
+   function register(uint64 _time, uint256 bidPrice) public  payable {
+        require(bidPrice > 0 && _time > 0, "Price/Time  cannot be zero");
+        borrowers[msg.sender].borrowingTime = _time;
+        borrowers[msg.sender].bidPrice = bidPrice;
+        borrowers[msg.sender].registered = true;
+        borrowersList.push(msg.sender);
+
+   }
 
     function mintCar() external payable {
         
@@ -69,14 +94,20 @@ contract Automobile is ERC4907, Ownable {
         require(address(this).balance > 0, "Balance is zero ser");
         payable(owner()).transfer(address(this).balance);
     }
-    function lendCar(uint256 tokenId, address user, uint64 expires) external {
-        // require( expires > block.timestamp, "Invalid expire duration bro");
-        setUser(tokenId, user, expires);
+    function lendCar(uint256 tokenId, address user) external {
+        require( 
+            borrowers[msg.sender].registered,  "User is not Registered"
+        );
+        
+        
+        // unregister them so have to go the register fn , and pay again
+        borrowers[msg.sender].registered = false;
+        setUser(tokenId, user, borrowers[user].borrowingTime);
         
         // expires is in timestamp, you can use that to inform the user on UI
         // should a user to be lend the car, have any properties?
         // should there be a minimum/max expire time
-        emit LendingUpdate( tokenId, user, expires);
+        emit LendingUpdate( tokenId, user, borrowers[user].borrowingTime);
 
     }
 
