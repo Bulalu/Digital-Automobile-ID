@@ -23,6 +23,7 @@ contract Automobile is ERC4907, Ownable {
     string public baseTokenURI;
     
     uint256 public mintPrice = 0.01 ether;
+    uint256 public lendingPrice = 0.05 ether;
     // struct CarAttributes {
     //     uint256 price;rice
     //     uint32 manufactured;
@@ -35,7 +36,7 @@ contract Automobile is ERC4907, Ownable {
 
     struct Borrowers {
         uint64 borrowingTime;
-        uint256 bidPrice;
+        uint256 balance;
         // did the user get the car?
         bool status;
         bool registered;
@@ -64,10 +65,12 @@ contract Automobile is ERC4907, Ownable {
     // how much will the protocol get
     // minimum time
     // relationship between _time and bidPrice
-   function register(uint64 _time, uint256 bidPrice) public  payable {
-        require(bidPrice > 0 && _time > 0, "Price/Time  cannot be zero");
+   function register(uint64 _time) public  payable {
+        require( _time > 0, "Time  cannot be zero");
+        require(msg.value >= lendingPrice, "Not enough ETH sent; check price!"); 
+
         borrowers[msg.sender].borrowingTime = _time;
-        borrowers[msg.sender].bidPrice = bidPrice;
+        borrowers[msg.sender].balance += msg.value;
         borrowers[msg.sender].registered = true;
         borrowersList.push(msg.sender);
 
@@ -96,7 +99,7 @@ contract Automobile is ERC4907, Ownable {
     }
     function lendCar(uint256 tokenId, address user) external {
         require( 
-            borrowers[msg.sender].registered,  "User is not Registered"
+            borrowers[user].registered,  "User is not Registered"
         );
         
         
@@ -111,7 +114,10 @@ contract Automobile is ERC4907, Ownable {
 
     }
 
-
+    // for test
+    function mint(uint256 tokenId, address to) public {
+        _mint(to, tokenId);
+    }
     // function getOwnerTokens(address _owner) public view returns (uint256[] memory) {
     //     uint256 count = balanceOf(_owner);
     //     uint256[] memory tokenIds = new uint256[](count);
